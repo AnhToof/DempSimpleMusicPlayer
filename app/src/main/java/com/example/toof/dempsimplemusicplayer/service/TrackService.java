@@ -54,12 +54,12 @@ public class TrackService extends Service
         mMediaPlayer.setOnErrorListener(this);
     }
 
-    public void setTrackList(List<Track> mTracks) {
-        this.mTracks = mTracks;
+    public void setTrackList(List<Track> trackList) {
+        mTracks = trackList;
     }
 
-    public void setTrack(int mPos) {
-        this.mPos = mPos;
+    public void setTrack(int pos) {
+        mPos = pos;
     }
 
     public int getCurrentPos() {
@@ -74,8 +74,8 @@ public class TrackService extends Service
         return mMediaPlayer.isPlaying();
     }
 
-    public void seek(int mCurrentPos) {
-        mMediaPlayer.seekTo(mCurrentPos);
+    public void seek(int currentPos) {
+        mMediaPlayer.seekTo(currentPos);
     }
 
     public void play() {

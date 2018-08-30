@@ -13,7 +13,6 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity
     private TextView mTextViewDuration;
     private RecyclerView mRecyclerView;
     private TrackService mTrackService;
-    private List<Track> mTracks;
+    private List<Track> mTracks = new ArrayList<>();
     private Intent mPlayIntent;
     private MainAdapter mAdapter;
     private boolean mIsMusicBound;
@@ -77,28 +76,28 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initView() {
-        mRecyclerView = findViewById(R.id.recycler_tracks);
-        mRecyclerView.setHasFixedSize(true);
-        mAdapter = new MainAdapter(this);
-        mAdapter.setOnItemRecyclerViewClickListener(this);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerView.ItemDecoration itemDecoration =
-                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        mRecyclerView.addItemDecoration(itemDecoration);
+        initRecyclerView();
 
         mButtonNext = findViewById(R.id.button_next);
         mButtonPlay = findViewById(R.id.button_play_pause);
         mButtonPrev = findViewById(R.id.button_previous);
+        mTextViewDuration = findViewById(R.id.text_duration);
+        mTextViewPlayingTime = findViewById(R.id.text_playing_time);
+        mSeekBar = findViewById(R.id.seek_duration);
+
         mButtonPlay.setOnClickListener(this);
         mButtonPrev.setOnClickListener(this);
         mButtonNext.setOnClickListener(this);
-
-        mTextViewDuration = findViewById(R.id.text_duration);
-        mTextViewPlayingTime = findViewById(R.id.text_playing_time);
-
-        mSeekBar = findViewById(R.id.seek_duration);
         mSeekBar.setOnSeekBarChangeListener(this);
+        mAdapter.setOnItemRecyclerViewClickListener(this);
+    }
+
+    private void initRecyclerView() {
+        mRecyclerView = findViewById(R.id.recycler_tracks);
+        mRecyclerView.setHasFixedSize(true);
+        mAdapter = new MainAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void initData() {
@@ -107,20 +106,20 @@ public class MainActivity extends AppCompatActivity
             bindService(mPlayIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
         }
 
-        TrackLocalDataSource trackLocalDataSource = TrackLocalDataSource.getmInstance();
-        TrackRepository trackRepository = TrackRepository.getmInstance(trackLocalDataSource);
+        TrackLocalDataSource trackLocalDataSource =
+                TrackLocalDataSource.getsInstance(this.getApplicationContext());
+        TrackRepository trackRepository = TrackRepository.getsInstance(trackLocalDataSource);
         MainContract.Presenter presenter = new MainPresenter(trackRepository);
         presenter.setView(this);
-        mTracks = new ArrayList<>();
-        mTracks = presenter.getData(this);
-        mAdapter.updateData(mTracks);
+        presenter.getData();
     }
 
     private void checkPermission() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, MY_REQUEST_CODE_READ_STORAGE);
+                requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
+                        MY_REQUEST_CODE_READ_STORAGE);
             } else {
                 initData();
             }
@@ -133,12 +132,12 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
             @NonNull int[] grantResults) {
         switch (requestCode) {
-            case 007:
+            case 123:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Permission Granted", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.permission_granted, Toast.LENGTH_LONG).show();
                     initData();
                 } else {
-                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_LONG).show();
                     finish();
                 }
                 return;
@@ -168,6 +167,14 @@ public class MainActivity extends AppCompatActivity
         if (mIsMusicBound) {
             stopService(mPlayIntent);
             mTrackService = null;
+        }
+    }
+
+    @Override
+    public void onGetDataSuccess(List<Track> trackList) {
+        if (trackList != null) {
+            mAdapter.updateData(trackList);
+            mTracks = trackList;
         }
     }
 

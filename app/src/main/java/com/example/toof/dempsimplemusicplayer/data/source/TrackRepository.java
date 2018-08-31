@@ -1,7 +1,8 @@
 package com.example.toof.dempsimplemusicplayer.data.source;
 
+import android.content.Context;
 import com.example.toof.dempsimplemusicplayer.data.model.Track;
-import java.util.List;
+import com.example.toof.dempsimplemusicplayer.data.source.local.OnGetDataListener;
 
 public class TrackRepository {
     private static TrackRepository sInstance;
@@ -18,7 +19,7 @@ public class TrackRepository {
         return sInstance;
     }
 
-    public List<Track> getData() {
-        return mLocalDataSource.getData();
+    public void getData(Context context, OnGetDataListener<Track> listener) {
+        mLocalDataSource.getData(context, listener);
     }
 }

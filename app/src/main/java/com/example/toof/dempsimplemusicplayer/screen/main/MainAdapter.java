@@ -33,7 +33,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         View view = inflater.inflate(R.layout.item_layout_track, viewGroup, false);
-        return new ViewHolder(mContext, view, mTracks, mListener);
+        return new ViewHolder(view, mTracks, mListener);
     }
 
     @Override
@@ -56,14 +56,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         private TextView mTextViewTitle;
         private TextView mTextViewArtist;
         private TextView mTextViewDuration;
-        private Context mContext;
         private List<Track> mTracks;
         private OnItemRecyclerViewClickListener<Track> mListener;
 
-        public ViewHolder(Context context, View view, List<Track> tracks,
+        public ViewHolder(View view, List<Track> tracks,
                 OnItemRecyclerViewClickListener<Track> listener) {
             super(view);
-            mContext = context;
             mListener = listener;
             mTracks = tracks;
             view.setOnClickListener(this);

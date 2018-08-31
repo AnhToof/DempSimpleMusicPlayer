@@ -10,6 +10,8 @@ public interface MainContract {
 
         void onGetDataSuccess(List<Track> trackList);
 
+        void onGetDataError(String error);
+
         void setTotalDuration(int duration);
 
         void updateTimeTrack();

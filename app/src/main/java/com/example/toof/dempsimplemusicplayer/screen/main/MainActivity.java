@@ -109,7 +109,8 @@ public class MainActivity extends AppCompatActivity
         TrackLocalDataSource trackLocalDataSource =
                 TrackLocalDataSource.getsInstance(this.getApplicationContext());
         TrackRepository trackRepository = TrackRepository.getsInstance(trackLocalDataSource);
-        MainContract.Presenter presenter = new MainPresenter(trackRepository);
+        MainContract.Presenter presenter =
+                new MainPresenter(getApplicationContext(), trackRepository);
         presenter.setView(this);
         presenter.getData();
     }
@@ -176,6 +177,11 @@ public class MainActivity extends AppCompatActivity
             mAdapter.updateData(trackList);
             mTracks = trackList;
         }
+    }
+
+    @Override
+    public void onGetDataError(String error) {
+        Toast.makeText(getBaseContext(), error, Toast.LENGTH_SHORT).show();
     }
 
     @Override

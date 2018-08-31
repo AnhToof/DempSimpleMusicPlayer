@@ -16,7 +16,7 @@ public class GetDataLocal {
     private Context mContext;
     private OnGetDataListener<Track> mListener;
 
-    public GetDataLocal(Context context, OnGetDataListener<Track> listener) {
+    GetDataLocal(Context context, OnGetDataListener<Track> listener) {
         mContext = context;
         mListener = listener;
     }

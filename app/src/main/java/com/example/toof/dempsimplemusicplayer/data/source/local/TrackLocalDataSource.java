@@ -8,7 +8,7 @@ public class TrackLocalDataSource implements TrackDataSource.LocalDataSource {
 
     private static TrackLocalDataSource sInstance;
 
-    public static TrackLocalDataSource getsInstance(Context context) {
+    public static TrackLocalDataSource getsInstance() {
         if (sInstance == null) {
             sInstance = new TrackLocalDataSource();
         }

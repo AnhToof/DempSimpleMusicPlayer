@@ -1,10 +1,11 @@
 package com.example.toof.dempsimplemusicplayer.data.source;
 
+import android.content.Context;
 import com.example.toof.dempsimplemusicplayer.data.model.Track;
-import java.util.List;
+import com.example.toof.dempsimplemusicplayer.data.source.local.OnGetDataListener;
 
 public interface TrackDataSource {
     interface LocalDataSource {
-        List<Track> getData();
+        void getData(Context context, OnGetDataListener<Track> listener);
     }
 }

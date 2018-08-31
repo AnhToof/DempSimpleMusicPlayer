@@ -5,29 +5,31 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.widget.Toast;
 import com.example.toof.dempsimplemusicplayer.R;
 import com.example.toof.dempsimplemusicplayer.data.model.Track;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class GetDataLocal implements DataLocalDataSource {
+public class GetDataLocal {
     private Context mContext;
+    private OnGetDataListener<Track> mListener;
 
-    GetDataLocal(Context context) {
+    public GetDataLocal(Context context, OnGetDataListener<Track> listener) {
         mContext = context;
+        mListener = listener;
     }
 
-    @Override
-    public List<Track> getListTrackLocal() {
+    public void getData() {
         List<Track> tracks = new ArrayList<>();
         ContentResolver contentResolver = mContext.getContentResolver();
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
         if (cursor == null) {
-            Toast.makeText(mContext, R.string.load_file_error, Toast.LENGTH_LONG).show();
+            mListener.onError(mContext.getString(R.string.load_file_error));
         } else if (!cursor.moveToFirst()) {
-            Toast.makeText(mContext, R.string.data_not_found, Toast.LENGTH_LONG).show();
+            mListener.onError(mContext.getString(R.string.data_not_found));
         } else {
             do {
                 String title = cursor.getString(
@@ -42,6 +44,12 @@ public class GetDataLocal implements DataLocalDataSource {
             } while (cursor.moveToNext());
             cursor.close();
         }
-        return tracks;
+        Collections.sort(tracks, new Comparator<Track>() {
+            @Override
+            public int compare(Track track, Track t1) {
+                return track.getTrackName().compareTo(t1.getTrackName());
+            }
+        });
+        mListener.onSuccess(tracks);
     }
 }

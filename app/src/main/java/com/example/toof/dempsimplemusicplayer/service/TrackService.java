@@ -79,19 +79,21 @@ public class TrackService extends Service
     }
 
     public void play() {
-        if (mIsPause) {
-            mIsPause = false;
-            mMediaPlayer.seekTo(getCurrentPos());
-            mMediaPlayer.start();
-        } else {
-            mMediaPlayer.reset();
-            try {
-                mMediaPlayer.setDataSource(mTracks.get(mPos).getPath());
-                mMediaPlayer.prepare();
-            } catch (IOException e) {
-                Log.e("MUSIC SERVICE", "Error setting data source", e);
+        if (mTracks != null) {
+            if (mIsPause) {
+                mIsPause = false;
+                mMediaPlayer.seekTo(getCurrentPos());
+                mMediaPlayer.start();
+            } else {
+                mMediaPlayer.reset();
+                try {
+                    mMediaPlayer.setDataSource(mTracks.get(mPos).getPath());
+                    mMediaPlayer.prepare();
+                } catch (IOException e) {
+                    Log.e("MUSIC SERVICE", "Error setting data source", e);
+                }
+                mMediaPlayer.start();
             }
-            mMediaPlayer.start();
         }
     }
 
@@ -101,15 +103,19 @@ public class TrackService extends Service
     }
 
     public void next() {
-        mPos++;
-        if (mPos >= mTracks.size()) mPos = 0;
-        play();
+        if (mTracks != null) {
+            mPos++;
+            if (mPos >= mTracks.size()) mPos = 0;
+            play();
+        }
     }
 
     public void previous() {
-        mPos--;
-        if (mPos < 0) mPos = mTracks.size() - 1;
-        play();
+        if (mTracks != null) {
+            mPos--;
+            if (mPos < 0) mPos = mTracks.size() - 1;
+            play();
+        }
     }
 
     @Override

@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         TrackLocalDataSource trackLocalDataSource =
-                TrackLocalDataSource.getsInstance(this.getApplicationContext());
+                TrackLocalDataSource.getsInstance();
         TrackRepository trackRepository = TrackRepository.getsInstance(trackLocalDataSource);
         MainContract.Presenter presenter =
                 new MainPresenter(getApplicationContext(), trackRepository);
